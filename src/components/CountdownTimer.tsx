@@ -42,7 +42,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
       const [hours, minutes] = iftarTime.split(":").map(Number);
 
       // Create a DateTime object for today's iftar
-      let iftarDateTime = now.set({
+      const iftarDateTime = now.set({
         hour: hours,
         minute: minutes,
         second: 0,
@@ -102,7 +102,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     return (
       <div className="flex flex-col items-center justify-center">
         <h2 className="text-4xl font-bold text-primary animate-pulse">
-          It's Iftar Time!
+          It&apos;s Iftar Time!
         </h2>
         <p className="mt-4 text-xl">
           Enjoy your meal and may Allah accept your fast.
