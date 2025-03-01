@@ -44,63 +44,40 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         setIsLoading(true);
         if (!city || !country) return;
 
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            async (position) => {
-              const { latitude, longitude } = position.coords;
-
-              const prayerResponse = await axios.get("/api/prayer-times", {
-                params: {
-                  latitude,
-                  longitude,
-                  method: 5, // Egyptian General Authority of Survey calculation method
-                },
-              });
-
-              const fajrTime = prayerResponse.data.fajr;
-              const formattedFajrTime =
-                prayerResponse.data.formatted?.fajr || formatToAmPm(fajrTime);
-
-              setFajrTime(fajrTime);
-              setFormattedFajrTime(formattedFajrTime);
-
-              // Determine which prayer to show based on current time
-              if (!manualToggle) {
-                checkCurrentPrayer(iftarTime, fajrTime);
-              }
-
-              setIsLoading(false);
+        try {
+          // Get user's location based on IP directly from client side
+          const ipResponse = await axios.get("https://ipinfo.io/json", {
+            headers: {
+              Accept: "application/json",
             },
-            async (error) => {
-              console.warn("Geolocation error:", error);
+          });
 
-              const locationResponse = await axios.get("/api/location");
-              const location = locationResponse.data;
+          const { loc } = ipResponse.data;
+          const [latitude, longitude] = loc.split(",");
 
-              const prayerResponse = await axios.get("/api/prayer-times", {
-                params: {
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                  method: 5, // Egyptian General Authority of Survey calculation method
-                },
-              });
+          const prayerResponse = await axios.get("/api/prayer-times", {
+            params: {
+              latitude,
+              longitude,
+              method: 5, // Egyptian General Authority of Survey calculation method
+            },
+          });
 
-              const fajrTime = prayerResponse.data.fajr;
-              const formattedFajrTime =
-                prayerResponse.data.formatted?.fajr || formatToAmPm(fajrTime);
+          const fajrTime = prayerResponse.data.fajr;
+          const formattedFajrTime =
+            prayerResponse.data.formatted?.fajr || formatToAmPm(fajrTime);
 
-              setFajrTime(fajrTime);
-              setFormattedFajrTime(formattedFajrTime);
+          setFajrTime(fajrTime);
+          setFormattedFajrTime(formattedFajrTime);
 
-              // Determine which prayer to show based on current time
-              if (!manualToggle) {
-                checkCurrentPrayer(iftarTime, fajrTime);
-              }
+          // Determine which prayer to show based on current time
+          if (!manualToggle) {
+            checkCurrentPrayer(iftarTime, fajrTime);
+          }
 
-              setIsLoading(false);
-            }
-          );
-        } else {
+          setIsLoading(false);
+        } catch (ipError) {
+          console.error("Error fetching IP location:", ipError);
           setIsLoading(false);
         }
       } catch (err) {
@@ -147,6 +124,11 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     // Check if iftar time has passed
     const iftarPassed = now > iftarDateTime;
 
+    // Check if we're between midnight and Fajr
+    const isBeforeFajr =
+      now.hour < fajrHours ||
+      (now.hour === fajrHours && now.minute < fajrMinutes);
+
     // If iftar has passed, show fajr countdown
     if (iftarPassed) {
       setCurrentPrayer("fajr");
@@ -158,7 +140,11 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         setCelebrationVisible(true);
         setTimeout(() => setCelebrationVisible(false), 5000);
       }
+    } else if (isBeforeFajr) {
+      // If we're after midnight but before Fajr, still show Fajr countdown
+      setCurrentPrayer("fajr");
     } else {
+      // Otherwise show Iftar countdown (after Fajr has passed for the day)
       setCurrentPrayer("iftar");
     }
 
@@ -192,6 +178,12 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
     const calculateTimeLeft = () => {
       const now = DateTime.now();
+
+      // Parse fajr time to check if we're before fajr
+      const [fajrHours, fajrMinutes] = fajrTime.split(":").map(Number);
+      const isBeforeFajr =
+        now.hour < fajrHours ||
+        (now.hour === fajrHours && now.minute < fajrMinutes);
 
       // Determine which prayer time to count down to
       if (currentPrayer === "iftar") {
@@ -272,6 +264,23 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
           .diff(now, ["hours", "minutes", "seconds"])
           .toObject();
 
+        // Check if Fajr time has just passed and we should switch to Iftar countdown
+        // Only switch if we're not in the period between midnight and Fajr
+        if (
+          diff.hours === 0 &&
+          diff.minutes === 0 &&
+          diff.seconds === 0 &&
+          !isBeforeFajr &&
+          !manualToggle
+        ) {
+          setCurrentPrayer("iftar");
+
+          // Show celebration message
+          setCelebrationMessage("It's Fajr Time!");
+          setCelebrationVisible(true);
+          setTimeout(() => setCelebrationVisible(false), 5000);
+        }
+
         // For Fajr countdown, calculate progress as inverse of remaining time
         const totalSecondsInNight = 12 * 60 * 60; // Approximate night duration
         const secondsUntilFajr =
@@ -307,11 +316,8 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         newTimeLeft.minutes === 0 &&
         newTimeLeft.seconds === 0
       ) {
-        if (currentPrayer === "iftar") {
-          setCurrentPrayer("fajr");
-        } else {
-          setCurrentPrayer("iftar");
-        }
+        // The switching logic is now handled in calculateTimeLeft
+        // to ensure proper conditions are checked
       }
     }, 1000);
 

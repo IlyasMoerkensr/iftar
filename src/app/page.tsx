@@ -24,11 +24,6 @@ export default function Home() {
   const [manualLocation, setManualLocation] = useState<boolean>(false);
   const [manualCity, setManualCity] = useState<string>("");
   const [manualCountry, setManualCountry] = useState<string>("");
-  const [geoPermissionDenied, setGeoPermissionDenied] =
-    useState<boolean>(false);
-  const [locationSource, setLocationSource] = useState<
-    "precise" | "approximate" | "manual"
-  >("approximate");
   const { trackLocationChange } = useAnalytics();
 
   useEffect(() => {
@@ -36,129 +31,32 @@ export default function Home() {
       try {
         setLoading(true);
 
-        // Try to get user's location using browser's Geolocation API
-        if (navigator.geolocation) {
-          // Set a timeout for geolocation request
-          const geoLocationTimeout = setTimeout(() => {
-            console.warn("Geolocation request timed out");
-            fallbackToIPLocation();
-          }, 5000); // 5 seconds timeout
+        // Get user's location based on IP directly from client side
+        const ipResponse = await axios.get("https://ipinfo.io/json", {
+          headers: {
+            Accept: "application/json",
+          },
+        });
 
-          navigator.geolocation.getCurrentPosition(
-            async (position) => {
-              // Clear the timeout since we got a response
-              clearTimeout(geoLocationTimeout);
-
-              // Successfully got user's coordinates
-              const { latitude, longitude } = position.coords;
-
-              try {
-                // Get location name from coordinates using reverse geocoding
-                const geocodeResponse = await axios.get(
-                  `/api/reverse-geocode?latitude=${latitude}&longitude=${longitude}`
-                );
-
-                const { city, country } = geocodeResponse.data;
-
-                // Format location data properly
-                const formattedLocation = {
-                  city: city ? formatLocationName(city) : "Unknown City",
-                  country: country || "Unknown Country",
-                  latitude: latitude.toString(),
-                  longitude: longitude.toString(),
-                };
-
-                setLocationData(formattedLocation);
-                setLocationSource("precise");
-
-                // Get prayer times based on location
-                const prayerResponse = await axios.get("/api/prayer-times", {
-                  params: {
-                    latitude,
-                    longitude,
-                  },
-                });
-
-                // Maghrib time is Iftar time
-                const maghribTime = prayerResponse.data.maghrib;
-                const formattedMaghribTime =
-                  prayerResponse.data.formatted?.maghrib ||
-                  formatToAmPm(maghribTime);
-
-                setIftarTime(maghribTime);
-                setFormattedIftarTime(formattedMaghribTime);
-                setLoading(false);
-
-                // When location data is successfully fetched, track it
-                if (formattedLocation) {
-                  trackLocationChange(
-                    formattedLocation.city,
-                    formattedLocation.country,
-                    "precise"
-                  );
-                }
-              } catch (err) {
-                console.error("Error fetching location data:", err);
-                fallbackToIPLocation();
-              }
-            },
-            (error) => {
-              // Clear the timeout since we got a response (error)
-              clearTimeout(geoLocationTimeout);
-
-              // User denied geolocation permission or other error
-              console.warn("Geolocation error:", error);
-              setGeoPermissionDenied(true);
-              fallbackToIPLocation();
-            },
-            {
-              enableHighAccuracy: true,
-              timeout: 5000,
-              maximumAge: 0,
-            }
-          );
-        } else {
-          // Browser doesn't support geolocation
-          console.warn("Geolocation is not supported by this browser");
-          fallbackToIPLocation();
-        }
-      } catch (err) {
-        console.error("Error in main fetchData:", err);
-        setError("Failed to load Iftar time. Please try again later.");
-        setLoading(false);
-      }
-    };
-
-    // Fallback to IP-based location if geolocation fails
-    const fallbackToIPLocation = async () => {
-      try {
-        console.log("Falling back to IP-based location");
-        setLocationSource("approximate");
-
-        // Step 1: Get user's location based on IP
-        const locationResponse = await axios.get("/api/location");
-        const location = locationResponse.data;
-
-        console.log("IP location data:", location);
+        const { city, country, loc } = ipResponse.data;
+        const [latitude, longitude] = loc.split(",");
 
         // Format location data properly
         const formattedLocation = {
-          ...location,
-          city: location.city
-            ? formatLocationName(location.city)
-            : "Unknown City",
-          country: location.country
-            ? getCountryName(location.country)
-            : "Unknown Country",
+          city: city ? formatLocationName(city) : "Unknown City",
+          country: country ? getCountryName(country) : "Unknown Country",
+          latitude,
+          longitude,
         };
 
         setLocationData(formattedLocation);
 
-        // Step 2: Get prayer times based on location
+        // Get prayer times based on location
         const prayerResponse = await axios.get("/api/prayer-times", {
           params: {
-            latitude: location.latitude,
-            longitude: location.longitude,
+            latitude,
+            longitude,
+            method: 5, // Egyptian General Authority of Survey calculation method
           },
         });
 
@@ -180,7 +78,7 @@ export default function Home() {
           );
         }
       } catch (err) {
-        console.error("Error in fallback location:", err);
+        console.error("Error in location detection:", err);
         setError("Failed to load Iftar time. Please try again later.");
         setLoading(false);
       }
@@ -233,7 +131,11 @@ export default function Home() {
 
       // Get prayer times based on manual location
       const prayerResponse = await axios.get("/api/prayer-times", {
-        params: { latitude, longitude },
+        params: {
+          latitude,
+          longitude,
+          method: 5, // Egyptian General Authority of Survey calculation method
+        },
       });
 
       // Update state with manual location
@@ -243,9 +145,6 @@ export default function Home() {
         latitude: latitude.toString(),
         longitude: longitude.toString(),
       });
-
-      setLocationSource("manual");
-      setGeoPermissionDenied(false);
 
       // Maghrib time is Iftar time
       const maghribTime = prayerResponse.data.maghrib;
@@ -292,9 +191,7 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center p-8 bg-gray-900/40 backdrop-blur-sm rounded-2xl border border-gray-800/50 shadow-xl w-full max-w-lg">
               <div className="animate-spin h-16 w-16 border-4 border-primary rounded-full border-t-transparent"></div>
               <p className="mt-6 text-xl">
-                {geoPermissionDenied
-                  ? "Using approximate location based on your IP address..."
-                  : "Locating you and calculating Iftar time..."}
+                Detecting your location and calculating Iftar time...
               </p>
             </div>
           ) : error ? (
@@ -384,29 +281,6 @@ export default function Home() {
                     formattedIftarTime || formatToAmPm(iftarTime)
                   }
                 />
-                {locationSource === "approximate" && (
-                  <div className="mt-4 p-3 bg-yellow-900/20 rounded-lg text-yellow-300 text-sm text-center">
-                    <p>
-                      <span className="font-semibold">Note:</span> Using
-                      approximate location based on your IP address. For more
-                      accurate results, please{" "}
-                      <button
-                        onClick={() => window.location.reload()}
-                        className="underline hover:text-yellow-200 transition-colors"
-                      >
-                        allow location access
-                      </button>{" "}
-                      or{" "}
-                      <button
-                        onClick={() => setManualLocation(true)}
-                        className="underline hover:text-yellow-200 transition-colors"
-                      >
-                        enter your location manually
-                      </button>
-                      .
-                    </p>
-                  </div>
-                )}
                 <div className="mt-6 flex justify-center">
                   <button
                     onClick={() => setManualLocation(true)}
