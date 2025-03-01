@@ -97,8 +97,8 @@ export default function Home() {
             تَوَكَّلْتُ، وَعَلَى رِزْقِكَ أَفْطَرْتُ
           </p>
           <p className="mt-1 text-xs">
-            "O Allah, I fasted for You and I believe in You and I put my trust
-            in You and I break my fast with Your sustenance."
+            &quot;O Allah, I fasted for You and I believe in You and I put my
+            trust in You and I break my fast with Your sustenance.&quot;
           </p>
         </footer>
       </div>
