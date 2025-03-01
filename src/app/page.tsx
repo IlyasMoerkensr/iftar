@@ -4,6 +4,7 @@ import CountdownTimer from "@/components/CountdownTimer";
 import Decorations from "@/components/Decorations";
 import QuranPlayer from "@/components/QuranPlayer";
 import SocialMetaTags from "@/components/SocialMetaTags";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -28,6 +29,7 @@ export default function Home() {
   const [locationSource, setLocationSource] = useState<
     "precise" | "approximate" | "manual"
   >("approximate");
+  const { trackLocationChange } = useAnalytics();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +88,15 @@ export default function Home() {
                 setIftarTime(maghribTime);
                 setFormattedIftarTime(formattedMaghribTime);
                 setLoading(false);
+
+                // When location data is successfully fetched, track it
+                if (formattedLocation) {
+                  trackLocationChange(
+                    formattedLocation.city,
+                    formattedLocation.country,
+                    "precise"
+                  );
+                }
               } catch (err) {
                 console.error("Error fetching location data:", err);
                 fallbackToIPLocation();
@@ -159,6 +170,15 @@ export default function Home() {
         setIftarTime(maghribTime);
         setFormattedIftarTime(formattedMaghribTime);
         setLoading(false);
+
+        // When location data is successfully fetched, track it
+        if (formattedLocation) {
+          trackLocationChange(
+            formattedLocation.city,
+            formattedLocation.country,
+            "approximate"
+          );
+        }
       } catch (err) {
         console.error("Error in fallback location:", err);
         setError("Failed to load Iftar time. Please try again later.");
@@ -237,6 +257,13 @@ export default function Home() {
 
       setLoading(false);
       setManualLocation(false);
+
+      // Track the manual location change
+      trackLocationChange(
+        formatLocationName(manualCity),
+        manualCountry,
+        "manual"
+      );
     } catch (err) {
       console.error("Error with manual location:", err);
       setError("Failed to get Iftar time for the specified location.");

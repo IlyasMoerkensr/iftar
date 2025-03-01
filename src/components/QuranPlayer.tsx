@@ -1,5 +1,6 @@
 "use client";
 
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { useEffect, useRef, useState } from "react";
 
 // List of Quran recitations with metadata
@@ -66,6 +67,7 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
   const [volume, setVolume] = useState(0.02); // Lower default volume to 2%
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const { trackQuranPlayerEvent } = useAnalytics();
 
   // Function to play a random recitation
   const playRandomRecitation = () => {
@@ -86,6 +88,9 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
       }, 100);
 
       setIsPlaying(true);
+
+      // Track the event
+      trackQuranPlayerEvent("random", quranRecitations[randomIndex].surah);
     }
   };
 
@@ -95,11 +100,13 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
       if (isPlaying) {
         audioRef.current.pause();
         setIsPlaying(false);
+        trackQuranPlayerEvent("pause", currentRecitation.surah);
       } else {
         audioRef.current.play().catch((err) => {
           console.error("Error playing audio:", err);
         });
         setIsPlaying(true);
+        trackQuranPlayerEvent("play", currentRecitation.surah);
       }
 
       // If this is the first play, initialize with a random recitation
@@ -119,6 +126,13 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
+
+    // Track volume change (debounced to avoid too many events)
+    const volumePercent = Math.round(newVolume * 100);
+    if (volumePercent % 10 === 0) {
+      // Only track at 10% intervals
+      trackQuranPlayerEvent("volume_change");
+    }
   };
 
   // Play next recitation
@@ -135,6 +149,9 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
         console.error("Error playing audio:", err);
       });
       setIsPlaying(true);
+
+      // Track the event
+      trackQuranPlayerEvent("next", quranRecitations[nextIndex].surah);
     }
   };
 
