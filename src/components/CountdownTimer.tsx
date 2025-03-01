@@ -404,11 +404,15 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
       <div className="w-full mb-8 relative">
         <div className="flex justify-between text-sm mb-1 px-1">
-          <span className="font-medium text-gray-400">Fajr</span>
+          <span className="font-medium text-gray-400">
+            {currentPrayer === "iftar" ? "Fajr" : "Iftar"}
+          </span>
           <span className="font-medium text-gray-300">
             {formatProgressPercentage()}
           </span>
-          <span className="font-medium text-gray-400">Iftar</span>
+          <span className="font-medium text-gray-400">
+            {currentPrayer === "iftar" ? "Iftar" : "Fajr"}
+          </span>
         </div>
         <div className="h-2 bg-gray-800 rounded-full overflow-hidden shadow-inner">
           <div
