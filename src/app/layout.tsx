@@ -16,13 +16,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Iftar Countdown",
   description: "Countdown timer to Iftar based on your location",
-  metadataBase: new URL("https://iftar-countdown.vercel.app"),
+  metadataBase: new URL("https://iftar.mustafafagomaa.com"),
   authors: [{ name: "Iftar Countdown App" }],
   keywords: ["iftar", "ramadan", "countdown", "prayer times", "fasting"],
   openGraph: {
     title: "Iftar Countdown",
     description: "Know exactly when to break your fast based on your location",
-    url: "https://iftar-countdown.vercel.app",
+    url: "https://iftar.mustafafagomaa.com",
     siteName: "Iftar Countdown",
     images: [
       {
