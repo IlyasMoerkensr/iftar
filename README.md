@@ -1,10 +1,9 @@
 # Iftar Countdown App
 
-A beautiful Next.js application that displays a countdown timer to Iftar (the time to break fast during Ramadan) based on the user's location. The app automatically detects the user's location using their IP address and calculates the Iftar time for their specific location.
+A beautiful Next.js application that displays a countdown timer to Iftar (the time to break fast during Ramadan) based on the user's location. 
 
 ## Features
 
-- 🌙 Automatic location detection based on IP address
 - ⏱️ Real-time countdown to Iftar (Maghrib prayer time)
 - 🌃 Beautiful dark mode UI with animated elements
 - 🌐 Works worldwide with accurate prayer times
@@ -53,13 +52,6 @@ A beautiful Next.js application that displays a countdown timer to Iftar (the ti
    ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
-
-## How It Works
-
-1. The app uses the user's IP address to determine their geographical location (city, country, latitude, longitude).
-2. It then uses the latitude and longitude to fetch accurate prayer times from the Aladhan API.
-3. The Maghrib prayer time is used as the Iftar time.
-4. A countdown timer displays the remaining time until Iftar.
 
 ## License
 
