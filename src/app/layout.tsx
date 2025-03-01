@@ -15,14 +15,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Iftar Countdown",
-  description: "Countdown timer to Iftar based on your location",
-  metadataBase: new URL("https://iftar.mustafafagomaa.com"),
+  description: "Know exactly when to break your fast based on your location",
+  metadataBase: new URL("https://iftar.mustafagomaa.com"),
   authors: [{ name: "Iftar Countdown App" }],
   keywords: ["iftar", "ramadan", "countdown", "prayer times", "fasting"],
   openGraph: {
     title: "Iftar Countdown",
     description: "Know exactly when to break your fast based on your location",
-    url: "https://iftar.mustafafagomaa.com",
+    url: "https://iftar.mustafagomaa.com",
     siteName: "Iftar Countdown",
     images: [
       {
@@ -89,9 +89,7 @@ export default function RootLayout({
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/jpeg" />
-
         <meta name="twitter:image:alt" content="Iftar Countdown App Preview" />
-        <meta name="twitter:card" content="summary_large_image" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
