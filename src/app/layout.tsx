@@ -26,21 +26,21 @@ export const metadata: Metadata = {
     siteName: "Iftar Countdown",
     images: [
       {
-        url: "/og-image-simple.jpg",
+        url: "https://iftar.mustafagomaa.com/og-image-simple.jpg",
         width: 1200,
         height: 630,
         alt: "Iftar Countdown App Preview",
         type: "image/jpeg",
       },
       {
-        url: "/og-image.jpg",
+        url: "https://iftar.mustafagomaa.com/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Iftar Countdown App Preview",
         type: "image/jpeg",
       },
       {
-        url: "/og-image.png",
+        url: "https://iftar.mustafagomaa.com/og-image.png",
         width: 1200,
         height: 630,
         alt: "Iftar Countdown App Preview",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Iftar Countdown",
     description: "Know exactly when to break your fast based on your location",
-    images: ["/og-image-simple.jpg"],
+    images: ["https://iftar.mustafagomaa.com/og-image-simple.jpg"],
     creator: "@iftarcountdown",
     site: "@iftarcountdown",
   },
@@ -86,9 +86,17 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        <meta
+          property="og:image"
+          content="https://iftar.mustafagomaa.com/og-image-simple.jpg"
+        />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/jpeg" />
+        <meta
+          name="twitter:image"
+          content="https://iftar.mustafagomaa.com/og-image-simple.jpg"
+        />
         <meta name="twitter:image:alt" content="Iftar Countdown App Preview" />
       </head>
       <body
