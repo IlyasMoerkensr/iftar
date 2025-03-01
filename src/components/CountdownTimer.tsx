@@ -1,13 +1,3 @@
-/**
- * Iftar Countdown Timer Component
- *
- * A component that displays a countdown to Iftar and Fajr prayer times
- * with a progress indicator and celebration overlay.
- *
- * @license MIT
- * Copyright (c) 2023 Iftar Countdown
- */
-
 import axios from "axios";
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
