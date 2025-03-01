@@ -2,6 +2,14 @@ import axios from "axios";
 import { DateTime } from "luxon";
 import { NextResponse } from "next/server";
 
+// Function to convert 24-hour time to AM/PM format
+const formatToAmPm = (time24: string): string => {
+  const [hours, minutes] = time24.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const displayHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM
+  return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+};
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -39,6 +47,15 @@ export async function GET(request: Request) {
       asr: timings.Asr,
       maghrib: timings.Maghrib, // This is Iftar time
       isha: timings.Isha,
+      // Include formatted times
+      formatted: {
+        fajr: formatToAmPm(timings.Fajr),
+        sunrise: formatToAmPm(timings.Sunrise),
+        dhuhr: formatToAmPm(timings.Dhuhr),
+        asr: formatToAmPm(timings.Asr),
+        maghrib: formatToAmPm(timings.Maghrib),
+        isha: formatToAmPm(timings.Isha),
+      },
     });
   } catch (error) {
     console.error("Error fetching prayer times:", error);
