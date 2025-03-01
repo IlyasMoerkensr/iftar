@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: "Iftar Countdown",
     images: [
       {
-        url: "/og-image.svg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Iftar Countdown App Preview",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Iftar Countdown",
     description: "Know exactly when to break your fast based on your location",
-    images: ["/og-image.svg"],
+    images: ["/og-image.png"],
   },
   icons: {
     icon: [
