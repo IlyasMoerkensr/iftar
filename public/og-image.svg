@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  <!-- Background stars -->
+  <g opacity="0.5">
+    <circle cx="200" cy="100" r="2" fill="white"/>
+    <circle cx="400" cy="200" r="3" fill="white"/>
+    <circle cx="600" cy="150" r="2" fill="white"/>
+    <circle cx="800" cy="300" r="2" fill="white"/>
+    <circle cx="1000" cy="100" r="3" fill="white"/>
+    <circle cx="300" cy="400" r="2" fill="white"/>
+    <circle cx="500" cy="500" r="3" fill="white"/>
+    <circle cx="700" cy="450" r="2" fill="white"/>
+    <circle cx="900" cy="550" r="2" fill="white"/>
+    <circle cx="1100" cy="500" r="3" fill="white"/>
+  </g>
+  <!-- Moon -->
+  <path d="M900 200 A150 150 0 1 0 900 500 A100 100 0 1 1 900 200Z" fill="#ffd166"/>
+  <!-- Mosque silhouette -->
+  <path d="M0,630 L0,450 L100,450 L150,350 L200,450 L300,450 L350,250 L400,450 L500,450 L550,350 L600,450 L700,450 L800,450 L850,250 L900,450 L1000,450 L1050,150 L1100,450 L1200,450 L1200,630 Z" fill="#4ecdc4" opacity="0.2"/>
+  <!-- Title -->
+  <text x="600" y="250" font-family="Arial, sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="#ffffff">Iftar Countdown</text>
+  <!-- Subtitle -->
+  <text x="600" y="330" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" fill="#ff6b6b">Know exactly when to break your fast</text>
+</svg>
