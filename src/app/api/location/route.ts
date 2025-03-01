@@ -1,7 +1,7 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     // Get IP info using ipinfo.io
     const ipResponse = await axios.get("https://ipinfo.io/json", {
