@@ -60,7 +60,11 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
               const { latitude, longitude } = position.coords;
 
               const prayerResponse = await axios.get("/api/prayer-times", {
-                params: { latitude, longitude },
+                params: {
+                  latitude,
+                  longitude,
+                  method: 5, // Egyptian General Authority of Survey calculation method
+                },
               });
 
               const fajrTime = prayerResponse.data.fajr;
@@ -87,6 +91,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
                 params: {
                   latitude: location.latitude,
                   longitude: location.longitude,
+                  method: 5, // Egyptian General Authority of Survey calculation method
                 },
               });
 
