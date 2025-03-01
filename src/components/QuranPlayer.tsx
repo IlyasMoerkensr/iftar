@@ -68,6 +68,7 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const { trackQuranPlayerEvent } = useAnalytics();
+  const hasInteractedRef = useRef(false); // Track if user has already interacted
 
   // Function to play a random recitation
   const playRandomRecitation = () => {
@@ -186,7 +187,9 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
       // We need to wait for user interaction before playing audio
       // This is a workaround for browsers that block autoplay
       const handleFirstInteraction = () => {
-        if (!isPlaying && audioRef.current) {
+        // Only handle the first interaction and ignore subsequent ones
+        if (!hasInteractedRef.current && !isPlaying && audioRef.current) {
+          hasInteractedRef.current = true;
           playRandomRecitation();
 
           // Remove the event listeners after first interaction
@@ -203,8 +206,38 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
 
       // Try to play immediately (will work on some browsers/conditions)
       setTimeout(() => {
-        if (audioRef.current && !isPlaying) {
-          playRandomRecitation();
+        if (audioRef.current && !isPlaying && !hasInteractedRef.current) {
+          // Set up a random recitation
+          const randomIndex = Math.floor(
+            Math.random() * quranRecitations.length
+          );
+          audioRef.current.src = quranRecitations[randomIndex].url;
+
+          // Try to autoplay with muted audio first (more likely to be allowed by browsers)
+          audioRef.current.muted = true;
+          audioRef.current
+            .play()
+            .then(() => {
+              // If successful, unmute after a short delay and update state
+              setTimeout(() => {
+                if (audioRef.current) {
+                  audioRef.current.muted = false;
+                  audioRef.current.volume = volume;
+                  setCurrentRecitation(quranRecitations[randomIndex]);
+                  setIsPlaying(true);
+                  hasInteractedRef.current = true;
+                }
+              }, 1000);
+            })
+            .catch(() => {
+              // If autoplay fails, keep the event listeners active for first interaction
+              console.log(
+                "Autoplay prevented by browser, waiting for user interaction"
+              );
+              if (audioRef.current) {
+                audioRef.current.muted = false; // Reset muted state
+              }
+            });
         }
       }, 1000);
 

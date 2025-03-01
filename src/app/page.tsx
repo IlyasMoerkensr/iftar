@@ -272,14 +272,12 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-950 text-white relative overflow-hidden">
       <SocialMetaTags />
+      <Decorations />
       <QuranPlayer autoPlay={true} />
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black text-white flex flex-col items-center justify-center p-4 relative">
-        {/* Decorative elements */}
-        <Decorations />
 
-        {/* Main content */}
+      <main className="container mx-auto px-4 py-8 flex-grow flex items-center justify-center relative z-10">
         <div className="z-10 max-w-4xl w-full mx-auto flex flex-col items-center">
           <div className="mb-8 text-center">
             <h1 className="text-5xl md:text-7xl font-bold mb-3 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">
@@ -454,7 +452,7 @@ export default function Home() {
             </p>
           </footer>
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }
