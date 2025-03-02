@@ -185,19 +185,38 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         now.hour < fajrHours ||
         (now.hour === fajrHours && now.minute < fajrMinutes);
 
+      // Parse iftar time
+      const [iftarHours, iftarMinutes] = iftarTime.split(":").map(Number);
+
+      // Create DateTime objects for both prayer times
+      let fajrDateTime = now.set({
+        hour: fajrHours,
+        minute: fajrMinutes,
+        second: 0,
+        millisecond: 0,
+      });
+
+      let iftarDateTime = now.set({
+        hour: iftarHours,
+        minute: iftarMinutes,
+        second: 0,
+        millisecond: 0,
+      });
+
+      // Adjust dates if times have passed
+      if (now > fajrDateTime) {
+        fajrDateTime = fajrDateTime.plus({ days: 1 });
+      }
+
+      if (now > iftarDateTime) {
+        iftarDateTime = iftarDateTime.plus({ days: 1 });
+      }
+
       // Determine which prayer time to count down to
       if (currentPrayer === "iftar") {
         // Calculate countdown to Iftar
-        const [iftarHours, iftarMinutes] = iftarTime.split(":").map(Number);
-        const iftarDateTime = now.set({
-          hour: iftarHours,
-          minute: iftarMinutes,
-          second: 0,
-          millisecond: 0,
-        });
-
         // If iftar time has already passed today, use tomorrow's iftar
-        let targetIftarDateTime = iftarDateTime;
+        const targetIftarDateTime = iftarDateTime;
         if (now > iftarDateTime && !manualToggle) {
           // Only auto-switch if not manually toggled
           setCurrentPrayer("fajr");
@@ -213,9 +232,6 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             minutes: 0,
             seconds: 0,
           };
-        } else if (now > iftarDateTime) {
-          // If manually toggled to iftar but iftar has passed, show countdown to tomorrow's iftar
-          targetIftarDateTime = iftarDateTime.plus({ days: 1 });
         }
 
         // Calculate the difference for Iftar countdown
@@ -223,18 +239,33 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
           .diff(now, ["hours", "minutes", "seconds"])
           .toObject();
 
-        // For Iftar countdown, we want to show progress as time remaining until Iftar
-        // Calculate progress as inverse of remaining time (100% - remaining percentage)
-        const totalSecondsInDay = 24 * 60 * 60;
-        const secondsUntilIftar =
-          (diff.hours || 0) * 3600 +
-          (diff.minutes || 0) * 60 +
-          (diff.seconds || 0);
+        // For Iftar countdown, calculate progress based on time elapsed since Fajr
+        // First, calculate total duration from Fajr to Iftar
+        const totalDuration = iftarDateTime.diff(fajrDateTime).as("seconds");
+        const elapsedSinceFajr = now.diff(fajrDateTime).as("seconds");
 
-        // If it's a long time until Iftar (e.g., just after Fajr), the progress should be low
-        // If it's close to Iftar time, the progress should be high
-        const progressPercentage =
-          100 - (secondsUntilIftar / totalSecondsInDay) * 100;
+        // If now is before fajr, we're in the previous day's cycle
+        let progressPercentage;
+        if (now < fajrDateTime) {
+          // We're between yesterday's Iftar and today's Fajr
+          // Use yesterday's Fajr to today's Iftar for total duration
+          const yesterdayFajr = fajrDateTime.minus({ days: 1 });
+          const totalCycleDuration = iftarDateTime
+            .diff(yesterdayFajr)
+            .as("seconds");
+          const elapsedSinceYesterdayFajr = now
+            .diff(yesterdayFajr)
+            .as("seconds");
+          progressPercentage =
+            (elapsedSinceYesterdayFajr / totalCycleDuration) * 100;
+        } else {
+          // We're between today's Fajr and today's Iftar
+          progressPercentage =
+            (elapsedSinceFajr / Math.abs(totalDuration)) * 100;
+        }
+
+        // Ensure progress is between 0 and 100
+        progressPercentage = Math.max(0, Math.min(100, progressPercentage));
         setProgress(progressPercentage);
 
         return {
@@ -244,21 +275,6 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         };
       } else {
         // Calculate countdown to Fajr
-        const [fajrHours, fajrMinutes] = fajrTime.split(":").map(Number);
-
-        // Create a DateTime object for Fajr
-        let fajrDateTime = now.set({
-          hour: fajrHours,
-          minute: fajrMinutes,
-          second: 0,
-          millisecond: 0,
-        });
-
-        // If Fajr time has already passed today, use tomorrow's Fajr
-        if (now > fajrDateTime) {
-          fajrDateTime = fajrDateTime.plus({ days: 1 });
-        }
-
         // Calculate the difference
         const diff = fajrDateTime
           .diff(now, ["hours", "minutes", "seconds"])
@@ -281,17 +297,32 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
           setTimeout(() => setCelebrationVisible(false), 5000);
         }
 
-        // For Fajr countdown, calculate progress as inverse of remaining time
-        const totalSecondsInNight = 12 * 60 * 60; // Approximate night duration
-        const secondsUntilFajr =
-          (diff.hours || 0) * 3600 +
-          (diff.minutes || 0) * 60 +
-          (diff.seconds || 0);
+        // For Fajr countdown, calculate progress based on time elapsed since Iftar
+        // First, calculate total duration from Iftar to Fajr
+        const totalDuration = fajrDateTime.diff(iftarDateTime).as("seconds");
+        const elapsedSinceIftar = now.diff(iftarDateTime).as("seconds");
 
-        // If it's a long time until Fajr (e.g., just after Iftar), the progress should be low
-        // If it's close to Fajr time, the progress should be high
-        const progressPercentage =
-          100 - (secondsUntilFajr / totalSecondsInNight) * 100;
+        // If now is before iftar, we're in the previous day's cycle
+        let progressPercentage;
+        if (now < iftarDateTime) {
+          // We're between yesterday's Iftar and today's Fajr
+          const yesterdayIftar = iftarDateTime.minus({ days: 1 });
+          const elapsedSinceYesterdayIftar = now
+            .diff(yesterdayIftar)
+            .as("seconds");
+          const totalNightDuration = fajrDateTime
+            .diff(yesterdayIftar)
+            .as("seconds");
+          progressPercentage =
+            (elapsedSinceYesterdayIftar / totalNightDuration) * 100;
+        } else {
+          // We're between today's Iftar and tomorrow's Fajr
+          progressPercentage =
+            (elapsedSinceIftar / Math.abs(totalDuration)) * 100;
+        }
+
+        // Ensure progress is between 0 and 100
+        progressPercentage = Math.max(0, Math.min(100, progressPercentage));
         setProgress(progressPercentage);
 
         return {
@@ -358,25 +389,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
   // Format the progress percentage for display
   const formatProgressPercentage = () => {
-    // For a more intuitive display, show the percentage of time that has passed
-    // rather than the raw progress calculation
-    if (currentPrayer === "iftar") {
-      const hoursInDay = 24;
-      const hoursLeft =
-        timeLeft.hours + timeLeft.minutes / 60 + timeLeft.seconds / 3600;
-      const percentComplete = Math.round(
-        ((hoursInDay - hoursLeft) / hoursInDay) * 100
-      );
-      return `${Math.min(Math.max(percentComplete, 0), 100)}%`;
-    } else {
-      const approxNightHours = 12;
-      const hoursLeft =
-        timeLeft.hours + timeLeft.minutes / 60 + timeLeft.seconds / 3600;
-      const percentComplete = Math.round(
-        ((approxNightHours - hoursLeft) / approxNightHours) * 100
-      );
-      return `${Math.min(Math.max(percentComplete, 0), 100)}%`;
-    }
+    return `${Math.round(progress)}%`;
   };
 
   return (
