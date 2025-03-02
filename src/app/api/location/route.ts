@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     // Get IP info using ipinfo.io
-    const ipResponse = await axios.get("http://localhost:9745/test.json", {
+    const ipResponse = await axios.get("http://192.168.178.176:9745/test.json", {
       headers: {
         Accept: "application/json",
       },
