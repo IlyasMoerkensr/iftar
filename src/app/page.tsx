@@ -2,7 +2,6 @@
 
 import CountdownTimer from "@/components/CountdownTimer";
 import Decorations from "@/components/Decorations";
-import QuranPlayer from "@/components/QuranPlayer";
 import SocialMetaTags from "@/components/SocialMetaTags";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import axios from "axios";
@@ -181,7 +180,6 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-gray-950 text-white relative overflow-hidden">
       <SocialMetaTags />
       <Decorations />
-      <QuranPlayer autoPlay={true} />
 
       <main className="container mx-auto px-4 py-8 flex-grow flex items-center justify-center relative z-10">
         <div className="z-10 max-w-4xl w-full mx-auto flex flex-col items-center">
