@@ -45,27 +45,35 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         if (!city || !country) return;
 
         try {
-          // Get user's location based on IP directly from client side
-          const ipResponse = await axios.get("https://ipinfo.io/json", {
-            headers: {
-              Accept: "application/json",
-            },
+          // Get user's GPS coordinates (they should already be available)
+          const gpsCoordinates = await new Promise<{
+            latitude: number;
+            longitude: number;
+          }>((resolve, reject) => {
+            if (!navigator.geolocation) {
+              reject(new Error("Geolocatie niet ondersteund"));
+            }
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                resolve({
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                });
+              },
+              (error) => reject(error)
+            );
           });
-
-          const { loc } = ipResponse.data;
-          const [latitude, longitude] = loc.split(",");
 
           const prayerResponse = await axios.get("/api/prayer-times", {
             params: {
-              latitude,
-              longitude,
+              latitude: gpsCoordinates.latitude,
+              longitude: gpsCoordinates.longitude,
               method: 5, // Egyptian General Authority of Survey calculation method
             },
           });
 
           const fajrTime = prayerResponse.data.fajr;
-          const formattedFajrTime =
-            prayerResponse.data.formatted?.fajr || formatToAmPm(fajrTime);
+          const formattedFajrTime = prayerResponse.data.formatted?.fajr || fajrTime;
 
           setFajrTime(fajrTime);
           setFormattedFajrTime(formattedFajrTime);
@@ -76,12 +84,12 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
           }
 
           setIsLoading(false);
-        } catch (ipError) {
-          console.error("Error fetching IP location:", ipError);
+        } catch (error) {
+          console.error("Fout bij GPS-ophaling:", error);
           setIsLoading(false);
         }
       } catch (err) {
-        console.error("Error fetching Fajr time:", err);
+        console.error("Fout bij ophaling Fajrtijd:", err);
         setIsLoading(false);
       }
     };
@@ -136,7 +144,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
       // Show celebration for 5 seconds when iftar time just passed
       const justPassedIftar = now.diff(iftarDateTime, "minutes").minutes < 5;
       if (justPassedIftar) {
-        setCelebrationMessage("It's Iftar Time!");
+        setCelebrationMessage("Het is Iftartijd!");
         setCelebrationVisible(true);
         setTimeout(() => setCelebrationVisible(false), 5000);
       }
@@ -153,19 +161,10 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     const justPassedFajr = fajrDiff < 0 && fajrDiff > -5;
 
     if (justPassedFajr) {
-      setCelebrationMessage("It's Fajr Time!");
+      setCelebrationMessage("Het is Fajtijd!");
       setCelebrationVisible(true);
       setTimeout(() => setCelebrationVisible(false), 5000);
     }
-  };
-
-  // Function to convert 24-hour time to AM/PM format
-  const formatToAmPm = (time24: string): string => {
-    if (!time24) return "";
-    const [hours, minutes] = time24.split(":").map(Number);
-    const period = hours >= 12 ? "PM" : "AM";
-    const displayHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM
-    return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
   };
 
   useEffect(() => {
@@ -365,7 +364,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     return (
       <div className="flex flex-col items-center justify-center p-8 bg-gray-900/40 backdrop-blur-sm rounded-2xl border border-gray-800/50 shadow-xl w-full">
         <div className="animate-spin h-16 w-16 border-4 border-primary rounded-full border-t-transparent"></div>
-        <p className="mt-6 text-xl">Loading prayer times...</p>
+        <p className="mt-6 text-xl">Gebedstijden laden...</p>
       </div>
     );
   }
@@ -408,8 +407,8 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             </h2>
             <p className="text-xl text-white">
               {currentPrayer === "iftar"
-                ? "Enjoy your meal and may Allah accept your fast."
-                : "It's time for Suhoor and prayers."}
+                ? "Geniet van je maaltijd en moge Allah je vasten accepteren."
+                : "Het is tijd voor Suhoor en het gebed."}
             </p>
           </div>
         </div>
@@ -439,7 +438,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
       </div>
 
       <h2 className="text-2xl md:text-3xl mb-8 text-center font-medium">
-        Time until{" "}
+        Tijd tot{" "}
         <span
           className={
             currentPrayer === "iftar"
@@ -465,7 +464,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
               {timeLeft.hours.toString().padStart(2, "0")}
             </span>
           </div>
-          <span className="mt-2 text-sm md:text-base text-gray-400">HOURS</span>
+          <span className="mt-2 text-sm md:text-base text-gray-400">UREN</span>
         </div>
 
         <div className="flex flex-col items-center">
@@ -478,7 +477,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             </span>
           </div>
           <span className="mt-2 text-sm md:text-base text-gray-400">
-            MINUTES
+            MINUTEN
           </span>
         </div>
 
@@ -492,7 +491,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             </span>
           </div>
           <span className="mt-2 text-sm md:text-base text-gray-400">
-            SECONDS
+            SECONDEN
           </span>
         </div>
       </div>
@@ -501,7 +500,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         <p className="text-gray-300 text-lg">
           {currentPrayer === "iftar" ? (
             <>
-              Iftar time:{" "}
+              Iftartijd:{" "}
               <span className="text-amber-400 font-medium">
                 {formattedIftarTime}
               </span>
@@ -510,13 +509,13 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             <>
               <span className="flex flex-col gap-1">
                 <span>
-                  Fajr time:{" "}
+                  Fajtijd:{" "}
                   <span className="text-indigo-400 font-medium">
                     {formattedFajrTime}
                   </span>
                 </span>
                 <span className="text-sm text-gray-400">
-                  Tomorrow&apos;s Iftar:{" "}
+                  Morgen Iftar:{" "}
                   <span className="text-amber-400">{formattedIftarTime}</span>
                 </span>
               </span>
@@ -544,7 +543,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
           />
         </svg>
-        Switch to {currentPrayer === "iftar" ? "Fajr" : "Iftar"} Countdown
+        Schakel naar {currentPrayer === "iftar" ? "Fajr" : "Iftar"} aftellen
       </button>
     </div>
   );

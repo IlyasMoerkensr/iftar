@@ -35,21 +35,21 @@ export default function SocialMetaTags() {
       />
       <meta property="og:url" content="https://iftar-countdown.vercel.app" />
       <meta property="og:type" content="website" />
-      <meta property="og:title" content="Iftar Countdown" />
+      <meta property="og:title" content="Iftar Aftellen" />
       <meta
         property="og:description"
-        content="Know exactly when to break your fast based on your location"
+        content="Weet precies wanneer je je vasten mag breken op basis van je locatie"
       />
-      <meta property="og:site_name" content="Iftar Countdown" />
+      <meta property="og:site_name" content="Iftar Aftellen" />
 
       {/* Twitter specific meta tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@iftarcountdown" />
       <meta name="twitter:creator" content="@iftarcountdown" />
-      <meta name="twitter:title" content="Iftar Countdown" />
+      <meta name="twitter:title" content="Iftar Aftellen" />
       <meta
         name="twitter:description"
-        content="Know exactly when to break your fast based on your location"
+        content="Weet precies wanneer je je vasten mag breken op basis van je locatie"
       />
       <meta
         name="twitter:image"

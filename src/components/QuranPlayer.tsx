@@ -263,7 +263,7 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
       {/* Expanded controls - always visible */}
       <div className="bg-gray-900/90 backdrop-blur-md p-4 rounded-xl border border-gray-700 shadow-2xl w-72 transition-all duration-300">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-white font-medium">Quran Player</h3>
+          <h3 className="text-white font-medium">Quran Speler</h3>
           {/* Removed the close button since we want it always visible */}
         </div>
 
@@ -280,7 +280,7 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
           <button
             onClick={playRandomRecitation}
             className="text-gray-300 hover:text-white p-2"
-            title="Random Surah"
+            title="Willekeurige Surah"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -301,7 +301,7 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
           <button
             onClick={togglePlay}
             className="bg-primary hover:bg-primary/80 text-white p-3 rounded-full"
-            title={isPlaying ? "Pause" : "Play"}
+            title={isPlaying ? "Pauze" : "Afspelen"}
           >
             {isPlaying ? (
               <svg
@@ -345,7 +345,7 @@ export default function QuranPlayer({ autoPlay = true }: QuranPlayerProps) {
           <button
             onClick={playNext}
             className="text-gray-300 hover:text-white p-2"
-            title="Next Surah"
+            title="Volgende Surah"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

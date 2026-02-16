@@ -14,40 +14,40 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Iftar Countdown",
-  description: "Know exactly when to break your fast based on your location",
+  title: "Iftar Aftellen",
+  description: "Weet precies wanneer je je vasten mag breken op basis van je locatie",
   metadataBase: new URL("https://iftar.mustafagomaa.com"),
-  authors: [{ name: "Iftar Countdown App" }],
-  keywords: ["iftar", "ramadan", "countdown", "prayer times", "fasting"],
+  authors: [{ name: "Iftar Aftellen App" }],
+  keywords: ["iftar", "ramadan", "aftellen", "gebedstijden", "vasten"],
   openGraph: {
-    title: "Iftar Countdown",
-    description: "Know exactly when to break your fast based on your location",
+    title: "Iftar Aftellen",
+    description: "Weet precies wanneer je je vasten mag breken op basis van je locatie",
     url: "https://iftar.mustafagomaa.com",
-    siteName: "Iftar Countdown",
+    siteName: "Iftar Aftellen",
     images: [
       {
         url: "https://iftar.mustafagomaa.com/og-image-simple.jpg",
         width: 1200,
         height: 630,
-        alt: "Iftar Countdown App Preview",
+        alt: "Iftar Aftellen App Voorbeeld",
         type: "image/jpeg",
       },
       {
         url: "https://iftar.mustafagomaa.com/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Iftar Countdown App Preview",
+        alt: "Iftar Aftellen App Voorbeeld",
         type: "image/jpeg",
       },
       {
         url: "https://iftar.mustafagomaa.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Iftar Countdown App Preview",
+        alt: "Iftar Aftellen App Voorbeeld",
         type: "image/png",
       },
     ],
-    locale: "en_US",
+    locale: "nl_NL",
     type: "website",
   },
   twitter: {
