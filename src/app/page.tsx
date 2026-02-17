@@ -99,15 +99,93 @@ export default function Home() {
           }
         } catch (err) {
           console.error("Fout bij reverse geocoding:", err);
-          setError("Kon stad en land niet bepalen. Voer alstublieft handmatig in.");
-          setManualLocation(true);
-          setLoading(false);
+          // Fallback: gebruik Urmond, Nederland
+          const defaultLat = 50.9547;
+          const defaultLon = 5.8441;
+          const fallbackCity = "Urmond";
+          const fallbackCountry = "Nederland";
+
+          const formattedLocation = {
+            city: formatLocationName(fallbackCity),
+            country: fallbackCountry,
+            latitude: defaultLat.toString(),
+            longitude: defaultLon.toString(),
+          };
+
+          setLocationData(formattedLocation);
+
+          try {
+            const prayerResponse = await axios.get("/api/prayer-times", {
+              params: {
+                latitude: defaultLat,
+                longitude: defaultLon,
+                method: 5,
+              },
+            });
+
+            const maghribTime = prayerResponse.data.maghrib;
+            const formattedMaghribTime =
+              prayerResponse.data.formatted?.maghrib || maghribTime;
+
+            setIftarTime(maghribTime);
+            setFormattedIftarTime(formattedMaghribTime);
+            setLoading(false);
+
+            trackLocationChange(
+              formattedLocation.city,
+              formattedLocation.country,
+              "default"
+            );
+          } catch (prayerErr) {
+            console.error("Fout bij ophalen gebedstijden voor fallback-locatie:", prayerErr);
+            setError("Kon gebedstijden niet ophalen.");
+            setLoading(false);
+          }
         }
       } catch (err) {
         console.error("Fout bij geolocatiebepaling:", err);
-        setError("Geolocatie toestemming geweigerd. Voer alstublieft handmatig uw locatie in.");
-        setManualLocation(true);
-        setLoading(false);
+        // Als gebruiker geen toestemming geeft voor GPS, gebruik Urmond als fallback
+        const defaultLat = 50.9547;
+        const defaultLon = 5.8441;
+        const fallbackCity = "Urmond";
+        const fallbackCountry = "Nederland";
+
+        const formattedLocation = {
+          city: formatLocationName(fallbackCity),
+          country: fallbackCountry,
+          latitude: defaultLat.toString(),
+          longitude: defaultLon.toString(),
+        };
+
+        setLocationData(formattedLocation);
+
+        try {
+          const prayerResponse = await axios.get("/api/prayer-times", {
+            params: {
+              latitude: defaultLat,
+              longitude: defaultLon,
+              method: 5,
+            },
+          });
+
+          const maghribTime = prayerResponse.data.maghrib;
+          const formattedMaghribTime =
+            prayerResponse.data.formatted?.maghrib || maghribTime;
+
+          setIftarTime(maghribTime);
+          setFormattedIftarTime(formattedMaghribTime);
+          setLoading(false);
+
+          trackLocationChange(
+            formattedLocation.city,
+            formattedLocation.country,
+            "default"
+          );
+        } catch (prayerErr) {
+          console.error("Fout bij ophalen gebedstijden voor fallback-locatie:", prayerErr);
+          setError("Kon gebedstijden niet ophalen.");
+          setLoading(false);
+        }
       }
     };
 
