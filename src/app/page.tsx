@@ -100,8 +100,8 @@ export default function Home() {
         } catch (err) {
           console.error("Fout bij reverse geocoding:", err);
           // Fallback: gebruik Urmond, Nederland
-          const defaultLat = 50.9547;
-          const defaultLon = 5.8441;
+          const defaultLat = 51.0046;
+          const defaultLon = 5.7701;
           const fallbackCity = "Urmond";
           const fallbackCountry = "NL";
 
@@ -145,8 +145,8 @@ export default function Home() {
       } catch (err) {
         console.error("Fout bij geolocatiebepaling:", err);
         // Als gebruiker geen toestemming geeft voor GPS, gebruik Urmond als fallback
-        const defaultLat = 50.9547;
-        const defaultLon = 5.8441;
+        const defaultLat = 51.0046;
+        const defaultLon = 5.7701;
         const fallbackCity = "Urmond";
         const fallbackCountry = "NL";
 

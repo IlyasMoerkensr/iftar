@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const latitude = searchParams.get("latitude");
     const longitude = searchParams.get("longitude");
-    const method = searchParams.get("method") || "5"; // Default to Egyptian General Authority of Survey (5)
+    const method = searchParams.get("method") || "21"; // Default to Egyptian General Authority of Survey (5)
 
     if (!latitude || !longitude) {
       return NextResponse.json(
