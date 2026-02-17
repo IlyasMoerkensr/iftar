@@ -36,6 +36,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   const [celebrationVisible, setCelebrationVisible] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState("");
   const [manualToggle, setManualToggle] = useState(false);
+  const [notified15Min, setNotified15Min] = useState(false);
 
   // Fetch Fajr time when component mounts
   useEffect(() => {
@@ -96,6 +97,47 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
     fetchFajrTime();
   }, [city, country, iftarTime, manualToggle]);
+
+  // Ask for Notification permission on mount (best-effort)
+  useEffect(() => {
+    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+      try {
+        Notification.requestPermission();
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, []);
+
+  // Helper to send a single 15-minute reminder notification
+  const notifyIfNeeded = (remainingSeconds: number, prayerLabel: string) => {
+    if (remainingSeconds <= 0) return;
+
+    const remindThreshold = 15 * 60; // 15 minutes in seconds
+
+    if (remainingSeconds <= remindThreshold && !notified15Min) {
+      setNotified15Min(true);
+
+      const title = `Bijna ${prayerLabel}`;
+      const body = `Over 15 minuten is het ${prayerLabel.toLowerCase()}.`;
+
+      if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+        try {
+          new Notification(title, { body });
+        } catch (e) {
+          // ignore notification errors
+        }
+      } else {
+        // Fallback: show in-app banner/overlay
+        setCelebrationMessage(body);
+        setCelebrationVisible(true);
+        setTimeout(() => setCelebrationVisible(false), 7000);
+      }
+    } else if (remainingSeconds > remindThreshold && notified15Min) {
+      // reset flag when we're sufficiently far from the target again
+      setNotified15Min(false);
+    }
+  };
 
   // Function to determine which prayer countdown to show based on current time
   const checkCurrentPrayer = (
@@ -238,6 +280,12 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
           .diff(now, ["hours", "minutes", "seconds"])
           .toObject();
 
+        // Notify 15 minutes before Iftar
+        const remainingIftarSeconds = Math.round(
+          targetIftarDateTime.diff(now, "seconds").as("seconds")
+        );
+        notifyIfNeeded(remainingIftarSeconds, "Iftar");
+
         // For Iftar countdown, calculate progress based on time elapsed since Fajr
         // First, calculate total duration from Fajr to Iftar
         const totalDuration = iftarDateTime.diff(fajrDateTime).as("seconds");
@@ -323,6 +371,10 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         // Ensure progress is between 0 and 100
         progressPercentage = Math.max(0, Math.min(100, progressPercentage));
         setProgress(progressPercentage);
+
+        // Notify 15 minutes before Fajr
+        const remainingFajrSeconds = Math.round(fajrDateTime.diff(now, "seconds").as("seconds"));
+        notifyIfNeeded(remainingFajrSeconds, "Fajr");
 
         return {
           hours: Math.floor(diff.hours || 0),
