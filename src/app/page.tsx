@@ -103,7 +103,7 @@ export default function Home() {
           const defaultLat = 50.9547;
           const defaultLon = 5.8441;
           const fallbackCity = "Urmond";
-          const fallbackCountry = "Netherlands";
+          const fallbackCountry = "NL";
 
           const formattedLocation = {
             city: formatLocationName(fallbackCity),
@@ -148,7 +148,7 @@ export default function Home() {
         const defaultLat = 50.9547;
         const defaultLon = 5.8441;
         const fallbackCity = "Urmond";
-        const fallbackCountry = "Netherlands";
+        const fallbackCountry = "NL";
 
         const formattedLocation = {
           city: formatLocationName(fallbackCity),
