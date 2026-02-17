@@ -16,31 +16,31 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Iftar Aftellen",
   description: "Weet precies wanneer je je vasten mag breken op basis van je locatie",
-  metadataBase: new URL("https://iftar.mustafagomaa.com"),
+  metadataBase: new URL("https://iftar.ilyasmoerkens.nl/"),
   authors: [{ name: "Iftar Aftellen App" }],
   keywords: ["iftar", "ramadan", "aftellen", "gebedstijden", "vasten"],
   openGraph: {
     title: "Iftar Aftellen",
     description: "Weet precies wanneer je je vasten mag breken op basis van je locatie",
-    url: "https://iftar.mustafagomaa.com",
+    url: "https://iftar.ilyasmoerkens.nl/",
     siteName: "Iftar Aftellen",
     images: [
       {
-        url: "https://iftar.mustafagomaa.com/og-image-simple.jpg",
+        url: "https://iftar.ilyasmoerkens.nl/og-image-simple.jpg",
         width: 1200,
         height: 630,
         alt: "Iftar Aftellen App Voorbeeld",
         type: "image/jpeg",
       },
       {
-        url: "https://iftar.mustafagomaa.com/og-image.jpg",
+        url: "https://iftar.ilyasmoerkens.nl/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Iftar Aftellen App Voorbeeld",
         type: "image/jpeg",
       },
       {
-        url: "https://iftar.mustafagomaa.com/og-image.png",
+        url: "https://iftar.ilyasmoerkens.nl/og-image.png",
         width: 1200,
         height: 630,
         alt: "Iftar Aftellen App Voorbeeld",
@@ -54,44 +54,44 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Iftar Countdown",
     description: "Know exactly when to break your fast based on your location",
-    images: ["https://iftar.mustafagomaa.com/og-image-simple.jpg"],
+    images: ["https://iftar.ilyasmoerkens.nl/og-image-simple.jpg"],
     creator: "@iftarcountdown",
     site: "@iftarcountdown",
   },
   icons: {
     icon: [
       {
-        url: "https://iftar.mustafagomaa.com/favicon.ico",
+        url: "https://iftar.ilyasmoerkens.nl/favicon.ico",
         sizes: "32x32",
         type: "image/x-icon",
       },
       {
-        url: "https://iftar.mustafagomaa.com/icons/icon-192.png",
+        url: "https://iftar.ilyasmoerkens.nl/icons/icon-192.png",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        url: "https://iftar.mustafagomaa.com/icons/icon-512.png",
+        url: "https://iftar.ilyasmoerkens.nl/icons/icon-512.png",
         sizes: "512x512",
         type: "image/png",
       },
     ],
-    shortcut: [{ url: "https://iftar.mustafagomaa.com/favicon.ico" }],
+    shortcut: [{ url: "https://iftar.ilyasmoerkens.nl/favicon.ico" }],
     apple: [
       {
-        url: "https://iftar.mustafagomaa.com/icons/apple-icon-180.png",
+        url: "https://iftar.ilyasmoerkens.nl/icons/apple-icon-180.png",
         sizes: "180x180",
         type: "image/png",
       },
     ],
   },
-  manifest: "https://iftar.mustafagomaa.com/manifest.json",
+  manifest: "https://iftar.ilyasmoerkens.nl/manifest.json",
   themeColor: "#0a0a0a",
   other: {
     "facebook-domain-verification": "your-verification-code",
     "msapplication-TileColor": "#0a0a0a",
     "msapplication-TileImage":
-      "https://iftar.mustafagomaa.com/icons/icon-192.png",
+      "https://iftar.ilyasmoerkens.nl/icons/icon-192.png",
   },
 };
 
@@ -105,14 +105,14 @@ export default function RootLayout({
       <head>
         <meta
           property="og:image"
-          content="https://iftar.mustafagomaa.com/og-image-simple.jpg"
+          content="https://iftar.ilyasmoerkens.nl/og-image-simple.jpg"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/jpeg" />
         <meta
           name="twitter:image"
-          content="https://iftar.mustafagomaa.com/og-image-simple.jpg"
+            content="https://iftar.ilyasmoerkens.nl/og-image-simple.jpg"
         />
         <meta name="twitter:image:alt" content="Iftar Countdown App Preview" />
       </head>

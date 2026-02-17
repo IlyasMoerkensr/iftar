@@ -27,13 +27,13 @@ export default function SocialMetaTags() {
       <meta property="og:image:type" content="image/jpeg" />
       <meta
         property="og:image"
-        content="https://iftar-countdown.vercel.app/og-image-simple.jpg"
+        content="https://iftar.ilyasmoerkens.nl/og-image-simple.jpg"
       />
       <meta
         property="og:image:secure_url"
-        content="https://iftar-countdown.vercel.app/og-image-simple.jpg"
+        content="https://iftar.ilyasmoerkens.nl/og-image-simple.jpg"
       />
-      <meta property="og:url" content="https://iftar-countdown.vercel.app" />
+      <meta property="og:url" content="https://iftar.ilyasmoerkens.nl/" />
       <meta property="og:type" content="website" />
       <meta property="og:title" content="Iftar Aftellen" />
       <meta
@@ -53,7 +53,7 @@ export default function SocialMetaTags() {
       />
       <meta
         name="twitter:image"
-        content="https://iftar-countdown.vercel.app/og-image-simple.jpg"
+        content="https://iftar.ilyasmoerkens.nl/og-image-simple.jpg"
       />
       <meta name="twitter:image:alt" content="Iftar Countdown App Preview" />
     </Head>

@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://iftar.mustafagomaa.com/sitemap.xml
+Sitemap: https://iftar.ilyasmoerkens.nl/sitemap.xml
